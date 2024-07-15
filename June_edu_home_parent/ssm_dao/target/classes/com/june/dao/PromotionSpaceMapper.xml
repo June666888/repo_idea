@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.june.dao.PromotionSpaceMapper">
+    <!--广告位列表查询  public List<PromotionSpace> findAllPromotionSpace();-->
+    <select id="findAllPromotionSpace" resultType="com.june.domain.PromotionSpace">
+        select * from promotion_space
+    </select>
+
+    <!--添加广告位  public void savePromotionSpace(PromotionSpace promotionSpace);-->
+    <insert id="savePromotionSpace" parameterType="com.june.domain.PromotionSpace">
+        insert into promotion_space values (null,#{name},#{spaceKey},#{createTime},#{updateTime},#{isDel})
+    </insert>
+
+    <!--回显广告位名称
+        根据id查询广告位信息  public PromotionSpace findPromotionSpaceById(int id);-->
+    <select id="findPromotionSpaceById" parameterType="int" resultType="com.june.domain.PromotionSpace">
+        <!--回显只回显名称，因为还有更新操作，要传递隐藏域中的id，所以查询id和name这两个字段-->
+        select id,name from promotion_space where id=#{id}
+    </select>
+    
+    <!--修改广告位  public void updatePromotionSpace(PromotionSpace promotionSpace);-->
+    <update id="updatePromotionSpace" parameterType="com.june.domain.PromotionSpace">
+        update promotion_space set name=#{name},updateTime=#{updateTime} where id=#{id}
+    </update>
+</mapper>

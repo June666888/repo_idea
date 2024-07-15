@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.june.dao.MenuMapper">
+    <resultMap id="menuResult" type="com.june.domain.Menu">
+        <id column="id" property="id"></id>
+        <result column="href" property="href"></result>
+        <result column="icon" property="icon"></result>
+        <result column="name" property="name"></result>
+        <result column="parent_id" property="parentId"></result>
+        <result column="description" property="description"></result>
+        <result column="orderNum" property="order_num"></result>
+        <result column="shown" property="shown"></result>
+        <result column="created_time" property="createdTime"></result>
+        <result column="updated_time" property="updatedTime"></result>
+        <result column="created_by" property="createdBy"></result>
+        <result column="updated_by" property="updatedBy"></result>
+
+        <!--ofType：泛型类型全路径
+            select="findSubMenuListByPid"：嵌套查询第二次执行的sql语句和第一次是一样的，即就是下面的select * from menu where parent_id =...
+            column="id"：查询出了父级菜单后，根据查询父级菜单结果的id值查询这个父级菜单所关联的子级菜单
+        -->
+        <collection property="subMenuList" ofType="com.june.domain.Menu" select="findSubMenuListByPid" column="id"></collection>
+    </resultMap>
+    
+    <!--查询所有父子菜单列表  public List<Menu> findSubMenuListByPid(int pid);-->
+    <!--不能用resultType，因为menu数据库表中没有任何一个字段是父级菜单所关联的子级菜单subMenuList，mybatis是自动封装不了这个subMenuList属性的，所以采用resultMap
+        第一次执行sql语句后对查询结果进行封装是走的resultMap
+    -->
+    <select id="findSubMenuListByPid" parameterType="int" resultMap="menuResult">
+        select * from menu where parent_id=#{id}
+    </select>
+
+    <!--菜单列表查询  public List<Menu> findAllMenu();-->
+    <select id="findAllMenu" resultType="com.june.domain.Menu">
+        select * from menu
+    </select>
+
+    <!--根据id查询菜单信息  public Menu findMenuById(Integer id);-->
+    <select id="findMenuById" parameterType="int" resultType="com.june.domain.Menu">
+        select * from menu where id=#{id}
+    </select>
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.june.dao.PromotionAdMapper">
+    <resultMap id="ad_space" type="com.june.domain.PromotionAd">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"/>
+        <result property="spaceId" column="spaceId"/>
+        <result property="keyword" column="keyword"/>
+        <result property="htmlContent" column="htmlContent"/>
+        <result property="text" column="text"/>
+        <result property="link" column="link"/>
+        <result property="startTime" column="startTime"/>
+        <result property="endTime" column="endTime"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="status" column="status"/>
+        <result property="priority" column="priority"/>
+        <result property="img" column="img"/>
+        <!--关联对象-->
+        <!--之前已经把广告位进行了编写：PromotionSpaceMapper的findPromotionSpaceById方法-->
+        <!--column：指定外键spaceId-->
+        <!--javaType：封装实体的类型-->
+        <association property="promotionSpace" select="com.june.dao.PromotionSpaceMapper.findPromotionSpaceById" column="spaceId" javaType="com.june.domain.PromotionSpace"></association>
+    </resultMap>
+
+    <!--广告分页查询  public List<PromotionAd> findAllAdByPage();-->
+    <select id="findAllAdByPage" resultMap="ad_space">
+        select * from promotion_ad
+    </select>
+
+    <!--广告状态上下线  public void updatePromotionAdStatus(PromotionAd promotionAd);-->
+    <select id="updatePromotionAdStatus" parameterType="com.june.domain.PromotionAd">
+        UPDATE promotion_ad SET status = #{status} ,updatetime = #{updateTime} WHERE id = #{id}
+    </select>
+
+    <!--新建广告  public void savePromotionAd(PromotionAd promotionAd);-->
+    <insert id="savePromotionAd" parameterType="com.june.domain.PromotionAd">
+        INSERT INTO promotion_ad VALUES(NULL,#{name},#{spaceId},#{keyword},#{htmlContent},#{text},#{link},#{startTime},
+                                        #{endTime},#{createTime},#{updateTime},#{status},#{priority},#{img});
+    </insert>
+
+    <!--修改广告  public void updatePromotionAd(PromotionAd promotionAd);-->
+    <update id="updatePromotionAd" parameterType="com.june.domain.PromotionAd">
+        update promotion_ad
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="spaceId != null and spaceId != ''">
+                spaceId = #{spaceId},
+            </if>
+            <if test="link != null">
+                link=#{link},
+            </if>
+            <if test="status != null and status != '' or status == 0">
+                status=#{status},
+            </if>
+            <if test="img != null">
+                img=#{img},
+            </if>
+            <if test="text != null">
+                text=#{text},
+            </if>
+            <if test="startTime != null">
+                startTime=#{startTime},
+            </if>
+            <if test="endTime != null">
+                endTime=#{endTime},
+            </if>
+            <if test="updateTime != null">
+                updateTime=#{updateTime},
+            </if>
+        </trim>
+        <where>
+            <if test="id != null and id != '' ">id = #{id}</if>
+        </where>
+    </update>
+
+    <!--回显广告信息  public PromotionAd findPromotionAdById(int id);-->
+    <select id="findPromotionAdById" resultType="com.june.domain.PromotionAd" parameterType="int">
+        SELECT
+            id,
+            NAME,
+            spaceId,
+            startTime,
+            endTime,
+            STATUS,
+            img,
+            link,
+            TEXT
+        FROM promotion_ad WHERE id = #{id}
+    </select>
+</mapper>
+
+
